@@ -1,6 +1,0 @@
-@integration_platform_HostAddress = http://localhost:5231
-
-GET {{integration_platform_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

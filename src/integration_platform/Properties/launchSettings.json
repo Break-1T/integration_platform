@@ -1,0 +1,25 @@
+﻿{
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:45302",
+      "sslPort": 44376
+    }
+  },
+  "profiles": {
+    "integration_platform - Development": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "applicationUrl": "http://localhost:8080",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "SchedulerSettings__MaxRunTasks": "100",
+        "DatabaseSettings__ConnectionString": "Server=localhost;Port=5432;User Id=postgres;Password=postgres;Database=integration_platform_db;"
+      }
+    }
+  }
+}
