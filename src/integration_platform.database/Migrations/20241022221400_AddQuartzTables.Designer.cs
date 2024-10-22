@@ -12,8 +12,8 @@ using integration_platform.database;
 namespace integration_platform.database.Migrations
 {
     [DbContext(typeof(IntegrationPlatformDbContext))]
-    [Migration("20241020152057_Init")]
-    partial class Init
+    [Migration("20241022221400_AddQuartzTables")]
+    partial class AddQuartzTables
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -36,12 +36,12 @@ namespace integration_platform.database.Migrations
                     b.Property<DateTime>("RecCreated")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 10, 20, 15, 20, 57, 40, DateTimeKind.Utc).AddTicks(50));
+                        .HasDefaultValueSql("now() at time zone 'utc'");
 
                     b.Property<DateTime>("RecModified")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 10, 20, 15, 20, 57, 40, DateTimeKind.Utc).AddTicks(407));
+                        .HasDefaultValueSql("now() at time zone 'utc'");
 
                     b.Property<string>("RecordType")
                         .IsRequired()
@@ -96,12 +96,12 @@ namespace integration_platform.database.Migrations
                     b.Property<DateTime>("RecCreated")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 10, 20, 15, 20, 57, 41, DateTimeKind.Utc).AddTicks(102));
+                        .HasDefaultValueSql("now() at time zone 'utc'");
 
                     b.Property<DateTime>("RecModified")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 10, 20, 15, 20, 57, 41, DateTimeKind.Utc).AddTicks(356));
+                        .HasDefaultValueSql("now() at time zone 'utc'");
 
                     b.HasKey("RecordTransferContentId");
 
@@ -128,12 +128,12 @@ namespace integration_platform.database.Migrations
                     b.Property<DateTime>("RecCreated")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 10, 20, 15, 20, 57, 40, DateTimeKind.Utc).AddTicks(3030));
+                        .HasDefaultValueSql("now() at time zone 'utc'");
 
                     b.Property<DateTime>("RecModified")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 10, 20, 15, 20, 57, 40, DateTimeKind.Utc).AddTicks(3365));
+                        .HasDefaultValueSql("now() at time zone 'utc'");
 
                     b.Property<string>("RecordType")
                         .IsRequired()
@@ -186,12 +186,12 @@ namespace integration_platform.database.Migrations
                     b.Property<DateTime>("RecCreated")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 10, 20, 15, 20, 57, 41, DateTimeKind.Utc).AddTicks(1085));
+                        .HasDefaultValueSql("now() at time zone 'utc'");
 
                     b.Property<DateTime>("RecModified")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 10, 20, 15, 20, 57, 41, DateTimeKind.Utc).AddTicks(1375));
+                        .HasDefaultValueSql("now() at time zone 'utc'");
 
                     b.Property<long?>("TransformRecordId")
                         .HasColumnType("bigint");

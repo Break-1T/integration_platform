@@ -30,8 +30,8 @@ public class IntegrationPlatformDbContext : DbContext
             entity.Property(e => e.StatusMessage);
             entity.Property(e => e.Target).IsRequired();
             entity.Property(e => e.TargetId);
-            entity.Property(e => e.RecCreated).HasDefaultValue(DateTime.UtcNow);
-            entity.Property(e => e.RecModified).HasDefaultValue(DateTime.UtcNow);
+            entity.Property(e => e.RecCreated).HasDefaultValueSql("now() at time zone 'utc'");
+            entity.Property(e => e.RecModified).HasDefaultValueSql("now() at time zone 'utc'");
 
             entity.HasKey(e => e.RecordTransferId);
 
@@ -56,8 +56,8 @@ public class IntegrationPlatformDbContext : DbContext
             entity.Property(e => e.StatusMessage);
             entity.Property(e => e.Target).IsRequired();
             entity.Property(e => e.EntityVersion).IsRequired();
-            entity.Property(e => e.RecCreated).HasDefaultValue(DateTime.UtcNow);
-            entity.Property(e => e.RecModified).HasDefaultValue(DateTime.UtcNow);
+            entity.Property(e => e.RecCreated).HasDefaultValueSql("now() at time zone 'utc'");
+            entity.Property(e => e.RecModified).HasDefaultValueSql("now() at time zone 'utc'");
 
             entity.HasKey(e => e.TransformRecordId);
 
@@ -80,8 +80,8 @@ public class IntegrationPlatformDbContext : DbContext
 
             entity.Property(e => e.RecordTransferContentId).ValueGeneratedOnAdd();
             entity.Property(e => e.Content);
-            entity.Property(e => e.RecCreated).HasDefaultValue(DateTime.UtcNow);
-            entity.Property(e => e.RecModified).HasDefaultValue(DateTime.UtcNow);
+            entity.Property(e => e.RecCreated).HasDefaultValueSql("now() at time zone 'utc'");
+            entity.Property(e => e.RecModified).HasDefaultValueSql("now() at time zone 'utc'");
 
             entity.HasKey(e => e.RecordTransferContentId);
         });
@@ -93,8 +93,8 @@ public class IntegrationPlatformDbContext : DbContext
             entity.Property(e => e.TransformRecordContentId).ValueGeneratedOnAdd();
             entity.Property(e => e.Content);
             entity.Property(e => e.ContentType).IsRequired();
-            entity.Property(e => e.RecCreated).HasDefaultValue(DateTime.UtcNow);
-            entity.Property(e => e.RecModified).HasDefaultValue(DateTime.UtcNow);
+            entity.Property(e => e.RecCreated).HasDefaultValueSql("now() at time zone 'utc'");
+            entity.Property(e => e.RecModified).HasDefaultValueSql("now() at time zone 'utc'");
 
             entity.HasKey(e => e.TransformRecordContentId);
         });

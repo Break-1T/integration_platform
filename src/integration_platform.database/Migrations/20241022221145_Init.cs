@@ -19,8 +19,8 @@ namespace integration_platform.database.Migrations
                     RecordTransferContentId = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Content = table.Column<byte[]>(type: "bytea", nullable: true),
-                    RecCreated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 10, 20, 15, 20, 57, 41, DateTimeKind.Utc).AddTicks(102)),
-                    RecModified = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 10, 20, 15, 20, 57, 41, DateTimeKind.Utc).AddTicks(356))
+                    RecCreated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now() at time zone 'utc'"),
+                    RecModified = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now() at time zone 'utc'")
                 },
                 constraints: table =>
                 {
@@ -42,8 +42,8 @@ namespace integration_platform.database.Migrations
                     StatusMessage = table.Column<string>(type: "text", nullable: true),
                     Target = table.Column<string>(type: "text", nullable: false),
                     TargetId = table.Column<string>(type: "text", nullable: true),
-                    RecCreated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 10, 20, 15, 20, 57, 40, DateTimeKind.Utc).AddTicks(50)),
-                    RecModified = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 10, 20, 15, 20, 57, 40, DateTimeKind.Utc).AddTicks(407))
+                    RecCreated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now() at time zone 'utc'"),
+                    RecModified = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now() at time zone 'utc'")
                 },
                 constraints: table =>
                 {
@@ -76,8 +76,8 @@ namespace integration_platform.database.Migrations
                     StatusMessage = table.Column<string>(type: "text", nullable: true),
                     Target = table.Column<string>(type: "text", nullable: false),
                     TargetId = table.Column<string>(type: "text", nullable: true),
-                    RecCreated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 10, 20, 15, 20, 57, 40, DateTimeKind.Utc).AddTicks(3030)),
-                    RecModified = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 10, 20, 15, 20, 57, 40, DateTimeKind.Utc).AddTicks(3365))
+                    RecCreated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now() at time zone 'utc'"),
+                    RecModified = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now() at time zone 'utc'")
                 },
                 constraints: table =>
                 {
@@ -104,8 +104,8 @@ namespace integration_platform.database.Migrations
                     ContentType = table.Column<string>(type: "text", nullable: false),
                     TransformRecordId = table.Column<long>(type: "bigint", nullable: true),
                     TransformRecordId1 = table.Column<long>(type: "bigint", nullable: true),
-                    RecCreated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 10, 20, 15, 20, 57, 41, DateTimeKind.Utc).AddTicks(1085)),
-                    RecModified = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 10, 20, 15, 20, 57, 41, DateTimeKind.Utc).AddTicks(1375))
+                    RecCreated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now() at time zone 'utc'"),
+                    RecModified = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now() at time zone 'utc'")
                 },
                 constraints: table =>
                 {

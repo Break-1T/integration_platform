@@ -1,9 +1,12 @@
 ﻿using integration_platform.Constant;
+using integration_platform.database;
 using integration_platform.database.Constants;
 using integration_platform.database.Options;
 using integration_platform.Options;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Quartz;
 using Quartz.AspNetCore;
 using System;
@@ -15,15 +18,21 @@ public static class IServiceCollectionExtensions
     public static IServiceCollection AddIntegratorPlatform(this IServiceCollection services, IConfiguration configuration)
     {
         var schedulerSettingsSection = configuration.GetSection(IntegratorConstants.SchedulerSettingsSectionKey);
-        var dbSection = configuration.GetSection(DatabaseConstants.DatabaseSectionKey);
+        var schedulerSettings = schedulerSettingsSection.Get<SchedulerSettings>() ?? new SchedulerSettings();
 
         services.AddOptions<SchedulerSettings>()
-            .Bind(schedulerSettingsSection)
+            .Configure(x=> x = schedulerSettings)
             .ValidateOnStart()
             .ValidateDataAnnotations();
 
-        var schedulerSettings = schedulerSettingsSection.Get<SchedulerSettings>();
-        var dbSettings = dbSection.Get<DatabaseSettings>();
+        var dbSettings = new DatabaseSettings();
+
+        using (var scope = services.BuildServiceProvider().CreateScope())
+        {
+            var options = scope.ServiceProvider.GetRequiredService<IOptions<DatabaseSettings>>();
+            dbSettings = options.Value;
+        }
+
         services.AddQuartz(option =>
         {
             option.SchedulerId = Environment.MachineName;
@@ -39,7 +48,7 @@ public static class IServiceCollectionExtensions
                 storeConfig.UsePostgres(postgresConfig =>
                 {
                     postgresConfig.TablePrefix = "scheduler.QRTZ_";
-                    postgresConfig.ConnectionString = dbSettings.ConnectionString;
+                    postgresConfig.ConnectionString = dbSettings.GetConnectionString();
                 });
 
                 storeConfig.UseNewtonsoftJsonSerializer();

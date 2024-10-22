@@ -1,4 +1,17 @@
-create schema if not exists scheduler;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
+
+#nullable disable
+
+namespace integration_platform.database.Migrations
+{
+    /// <inheritdoc />
+    public partial class AddQuartzTables : Migration
+    {
+        /// <inheritdoc />
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.Sql(
+@"create schema if not exists scheduler;
 
 DROP TABLE IF EXISTS scheduler.qrtz_fired_triggers;
 DROP TABLE IF EXISTS scheduler.qrtz_paused_trigger_grps;
@@ -167,4 +180,13 @@ create index idx_qrtz_ft_trig_nm_gp on scheduler.qrtz_fired_triggers(sched_name,
 create index idx_qrtz_ft_trig_inst_name on scheduler.qrtz_fired_triggers(instance_name);
 create index idx_qrtz_ft_job_name on scheduler.qrtz_fired_triggers(job_name);
 create index idx_qrtz_ft_job_group on scheduler.qrtz_fired_triggers(job_group);
-create index idx_qrtz_ft_job_req_recovery on scheduler.qrtz_fired_triggers(requests_recovery);
+create index idx_qrtz_ft_job_req_recovery on scheduler.qrtz_fired_triggers(requests_recovery);");
+        }
+
+        /// <inheritdoc />
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+
+        }
+    }
+}
