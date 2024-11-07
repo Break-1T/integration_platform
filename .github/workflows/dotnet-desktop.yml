@@ -1,0 +1,36 @@
+name: Publish NuGet Package
+
+on:
+  push:
+    tags:
+      - 'v*.*.*' # Триггер на пуш тегов версии, например v1.0.0
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v3
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0' # Укажите нужную версию .NET SDK
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build project
+        run: dotnet build --no-restore --configuration Release
+
+      - name: Pack NuGet package
+        run: dotnet pack --no-build --configuration Release -o ./nuget
+
+      - name: Publish to GitHub Packages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          dotnet nuget push "./nuget/*.nupkg" \
+            --source "github" \
+            --api-key "$GITHUB_TOKEN"
