@@ -3,12 +3,16 @@ name: Publish NuGet Package
 on:
   push:
     branches:
-      - master # Запускать только при пуше в master (или другую основную ветку)
-  workflow_dispatch: # Также позволяет запустить вручную
+      - main # Запускать на основной ветке
+  workflow_dispatch: # Позволяет запускать вручную
 
 jobs:
   tag_and_publish:
     runs-on: ubuntu-latest
+
+    env:
+      MAJOR_VERSION: 1 # Задаем мажорную версию здесь
+      MINOR_VERSION: 0 # Задаем минорную версию здесь
 
     steps:
       - name: Check out the code
@@ -17,36 +21,31 @@ jobs:
       - name: Set up .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '8.0' # Укажите нужную версию .NET SDK
+          dotnet-version: '7.x' # Укажите нужную версию .NET SDK
 
       - name: Get latest tag
         id: get_tag
         run: |
-          # Получаем последний тег
-          latest_tag=$(git describe --tags --abbrev=0)
-          echo "Последний тег: $latest_tag"
-          echo "tag=$latest_tag" >> $GITHUB_ENV
+          # Получаем последний тег, если он существует
+          tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [ -z "$tag" ]; then
+            tag="v${MAJOR_VERSION}.${MINOR_VERSION}.0"
+          fi
+          echo "Последний тег: $tag"
+          echo "tag=$tag" >> $GITHUB_ENV
 
-      - name: Calculate next tag
+      - name: Calculate next build number
         id: next_tag
         run: |
-          # Получаем значение переменной tag из GitHub Actions переменных окружения
-          tag="${{ env.tag }}"
-    
-          # Удаляем префикс 'v' из тега (если он присутствует)
+          # Удаляем префикс 'v' из последнего тега и извлекаем номер билда
           tag_without_v="${tag#v}"
-    
-          # Разбиваем версию на major, minor и patch
           IFS='.' read -ra VERSION <<< "$tag_without_v"
-          major=${VERSION[0]}
-          minor=${VERSION[1]}
-          patch=${VERSION[2]}
-    
-          # Инкрементируем patch версию
-          next_patch=$((patch + 1))
-          new_tag="v$major.$minor.$next_patch"
-    
-          # Устанавливаем новый тег как GitHub Actions переменную окружения
+          build=${VERSION[2]}
+
+          # Инкрементируем только номер билда
+          next_build=$((build + 1))
+          new_tag="v${MAJOR_VERSION}.${MINOR_VERSION}.$next_build"
+
           echo "next_tag=$new_tag" >> $GITHUB_ENV
           echo "Новый тег: $new_tag"
 
