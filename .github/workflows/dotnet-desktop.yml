@@ -1,4 +1,4 @@
-name: Publish NuGet Package
+name: Build and Publish NuGet Package
 
 on:
   push:
@@ -7,12 +7,13 @@ on:
   workflow_dispatch: # Позволяет запускать вручную
 
 jobs:
-  tag_and_publish:
+  build_and_publish:
     runs-on: ubuntu-latest
 
     env:
-      MAJOR_VERSION: 1 # Задаем мажорную версию здесь
-      MINOR_VERSION: 0 # Задаем минорную версию здесь
+      MAJOR_VERSION: 1
+      MINOR_VERSION: 0
+      BUILD_VERSION: ${{ github.run_number }} # Автоинкрементируемый номер билда
 
     steps:
       - name: Check out the code
@@ -23,57 +24,21 @@ jobs:
         with:
           dotnet-version: '8.x' # Укажите нужную версию .NET SDK
 
-      - name: Fetch all tags
-        run: git fetch --tags
-
-      - name: Get latest tag
-        id: get_tag
+      - name: Calculate version
         run: |
-          # Получаем последний тег, если он существует
-          tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-          if [ -z "$tag" ]; then
-            tag="v${MAJOR_VERSION}.${MINOR_VERSION}.0"
-          fi
-          echo "Последний тег: $tag"
-          echo "tag=$tag" >> $GITHUB_ENV
-
-      - name: Calculate next build number
-        id: next_tag
-        run: |
-          # Удаляем префикс 'v' из последнего тега и извлекаем номер билда
-          tag_without_v="${tag#v}"
-          IFS='.' read -ra VERSION <<< "$tag_without_v"
-          
-          major="${MAJOR_VERSION}"
-          minor="${MINOR_VERSION}"
-          build=${VERSION[2]}
-
-          # Инкрементируем только номер билда
-          next_build=$((build + 1))
-          new_tag="v$major.$minor.$next_build"
-
-          # Проверка существования тега на удалённом репозитории и инкремент при необходимости
-          while git ls-remote --tags origin | grep -q "refs/tags/$new_tag"; do
-            next_build=$((next_build + 1))
-            new_tag="v$major.$minor.$next_build"
-          done
-
-          echo "next_tag=$new_tag" >> $GITHUB_ENV
-          echo "package_version=${new_tag#v}" >> $GITHUB_ENV # Для версии пакета без 'v'
-          echo "Новый тег: $new_tag"
-
-      - name: Create new tag
-        run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git tag ${{ env.next_tag }}
-          git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }} ${{ env.next_tag }}
+          # Формируем версию из мажорной, минорной и номера билда
+          version="${MAJOR_VERSION}.${MINOR_VERSION}.${BUILD_VERSION}"
+          echo "version=$version" >> $GITHUB_ENV
+          echo "Собранная версия: $version"
 
       - name: Restore dependencies
         run: dotnet restore
 
-      - name: Build and Pack project
-        run: dotnet pack --configuration Release -o ./nuget -p:PackageVersion=${{ env.package_version }}
+      - name: Build project
+        run: dotnet build --configuration Release
+
+      - name: Pack project
+        run: dotnet pack --configuration Release -o ./nuget -p:PackageVersion=${{ env.version }}
 
       - name: Publish to GitHub Packages
         env:
