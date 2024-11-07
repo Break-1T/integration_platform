@@ -34,30 +34,34 @@ jobs:
           echo "Последний тег: $tag"
           echo "tag=$tag" >> $GITHUB_ENV
 
+      - name: Fetch all tags
+        run: git fetch --tags
+
       - name: Calculate next build number
         id: next_tag
         run: |
           # Удаляем префикс 'v' из последнего тега и извлекаем номер билда
           tag_without_v="${tag#v}"
           IFS='.' read -ra VERSION <<< "$tag_without_v"
-    
+      
           # Используем указанные в воркфлоу мажор и минор, а билд инкрементируем
           major="${MAJOR_VERSION}"
           minor="${MINOR_VERSION}"
           build=${VERSION[2]}
-
-          # Проверка на существующий тег
+      
+          # Инкремент номера билда и проверка существования тега
           next_build=$((build + 1))
           new_tag="v$major.$minor.$next_build"
-
-          # Проверка существования тега и инкремент при необходимости
-          while git rev-parse "$new_tag" >/dev/null 2>&1; do
+      
+          # Проверка существования тега на удалённом репозитории и инкремент при необходимости
+          while git ls-remote --tags origin | grep -q "refs/tags/$new_tag"; do
             next_build=$((next_build + 1))
             new_tag="v$major.$minor.$next_build"
           done
-
+      
           echo "next_tag=$new_tag" >> $GITHUB_ENV
           echo "Новый тег: $new_tag"
+
 
 
       - name: Create new tag
