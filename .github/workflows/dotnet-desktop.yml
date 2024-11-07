@@ -23,6 +23,9 @@ jobs:
         with:
           dotnet-version: '7.x' # Укажите нужную версию .NET SDK
 
+      - name: Fetch all tags
+        run: git fetch --tags
+
       - name: Get latest tag
         id: get_tag
         run: |
@@ -34,51 +37,43 @@ jobs:
           echo "Последний тег: $tag"
           echo "tag=$tag" >> $GITHUB_ENV
 
-      - name: Fetch all tags
-        run: git fetch --tags
-
       - name: Calculate next build number
         id: next_tag
         run: |
           # Удаляем префикс 'v' из последнего тега и извлекаем номер билда
           tag_without_v="${tag#v}"
           IFS='.' read -ra VERSION <<< "$tag_without_v"
-      
-          # Используем указанные в воркфлоу мажор и минор, а билд инкрементируем
+          
           major="${MAJOR_VERSION}"
           minor="${MINOR_VERSION}"
           build=${VERSION[2]}
-      
-          # Инкремент номера билда и проверка существования тега
+
+          # Инкрементируем только номер билда
           next_build=$((build + 1))
           new_tag="v$major.$minor.$next_build"
-      
+
           # Проверка существования тега на удалённом репозитории и инкремент при необходимости
           while git ls-remote --tags origin | grep -q "refs/tags/$new_tag"; do
             next_build=$((next_build + 1))
             new_tag="v$major.$minor.$next_build"
           done
-      
+
           echo "next_tag=$new_tag" >> $GITHUB_ENV
+          echo "package_version=${new_tag#v}" >> $GITHUB_ENV # Для версии пакета без 'v'
           echo "Новый тег: $new_tag"
-
-
 
       - name: Create new tag
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git tag ${{ env.next_tag }}
-          git push origin ${{ env.next_tag }}
+          git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }} ${{ env.next_tag }}
 
       - name: Restore dependencies
         run: dotnet restore
 
-      - name: Build project
-        run: dotnet build --no-restore --configuration Release
-
-      - name: Pack NuGet package
-        run: dotnet pack --no-build --configuration Release -o ./nuget
+      - name: Build and Pack project
+        run: dotnet pack --no-build --configuration Release -o ./nuget -p:PackageVersion=${{ env.package_version }}
 
       - name: Publish to GitHub Packages
         env:
