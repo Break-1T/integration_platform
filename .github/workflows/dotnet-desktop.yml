@@ -30,14 +30,23 @@ jobs:
       - name: Calculate next tag
         id: next_tag
         run: |
-          # Удаляем префикс 'v' и разбиваем на части
-          tag_without_v=${{ env.tag#v }} # Удаляем 'v' только если он есть в начале строки
+          # Получаем значение переменной tag из GitHub Actions переменных окружения
+          tag="${{ env.tag }}"
+    
+          # Удаляем префикс 'v' из тега (если он присутствует)
+          tag_without_v="${tag#v}"
+    
+          # Разбиваем версию на major, minor и patch
           IFS='.' read -ra VERSION <<< "$tag_without_v"
           major=${VERSION[0]}
           minor=${VERSION[1]}
           patch=${VERSION[2]}
-          next_patch=$((patch + 1)) # Инкремент патч-версии
+    
+          # Инкрементируем patch версию
+          next_patch=$((patch + 1))
           new_tag="v$major.$minor.$next_patch"
+    
+          # Устанавливаем новый тег как GitHub Actions переменную окружения
           echo "next_tag=$new_tag" >> $GITHUB_ENV
           echo "Новый тег: $new_tag"
 
