@@ -73,7 +73,7 @@ jobs:
         run: dotnet restore
 
       - name: Build and Pack project
-        run: dotnet pack --no-build --configuration Release -o ./nuget -p:PackageVersion=${{ env.package_version }}
+        run: dotnet pack --configuration Release -o ./nuget -p:PackageVersion=${{ env.package_version }}
 
       - name: Publish to GitHub Packages
         env:
