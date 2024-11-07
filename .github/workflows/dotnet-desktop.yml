@@ -40,14 +40,25 @@ jobs:
           # Удаляем префикс 'v' из последнего тега и извлекаем номер билда
           tag_without_v="${tag#v}"
           IFS='.' read -ra VERSION <<< "$tag_without_v"
+    
+          # Используем указанные в воркфлоу мажор и минор, а билд инкрементируем
+          major="${MAJOR_VERSION}"
+          minor="${MINOR_VERSION}"
           build=${VERSION[2]}
 
-          # Инкрементируем только номер билда
+          # Проверка на существующий тег
           next_build=$((build + 1))
-          new_tag="v${MAJOR_VERSION}.${MINOR_VERSION}.$next_build"
+          new_tag="v$major.$minor.$next_build"
+
+          # Проверка существования тега и инкремент при необходимости
+          while git rev-parse "$new_tag" >/dev/null 2>&1; do
+            next_build=$((next_build + 1))
+            new_tag="v$major.$minor.$next_build"
+          done
 
           echo "next_tag=$new_tag" >> $GITHUB_ENV
           echo "Новый тег: $new_tag"
+
 
       - name: Create new tag
         run: |
