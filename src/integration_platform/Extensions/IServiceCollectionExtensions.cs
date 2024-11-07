@@ -1,9 +1,7 @@
-﻿using integration_platform.Constant;
-using integration_platform.database;
-using integration_platform.database.Constants;
+﻿using integration_platform.Classes.Base;
+using integration_platform.Constant;
 using integration_platform.database.Options;
 using integration_platform.Options;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -15,7 +13,7 @@ namespace integration_platform.Extensions;
 
 public static class IServiceCollectionExtensions
 {
-    public static IServiceCollection AddIntegratorPlatform(this IServiceCollection services, IConfiguration configuration)
+    internal static IServiceCollection AddIntegratorPlatform(this IServiceCollection services, IConfiguration configuration)
     {
         var schedulerSettingsSection = configuration.GetSection(IntegratorConstants.SchedulerSettingsSectionKey);
         var schedulerSettings = schedulerSettingsSection.Get<SchedulerSettings>() ?? new SchedulerSettings();
@@ -62,5 +60,13 @@ public static class IServiceCollectionExtensions
         });
 
         return services;
+    }
+    
+    public static IServiceCollection AddIntegratorJob<TJob>(this IServiceCollection services) 
+        where TJob : BaseIntegrationJob
+    {
+        return services
+            .AddScoped(typeof(TJob), typeof(TJob))
+            .AddTransient(typeof(TJob), typeof(TJob));
     }
 }

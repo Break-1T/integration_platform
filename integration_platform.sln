@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "integration_platform", "src
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "integration_platform.database", "src\integration_platform.database\integration_platform.database.csproj", "{A24A621E-83C7-4CC4-9AD2-0E7B48A68DEB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "integration_platform.utils", "src\integration_platform.utils\integration_platform.utils.csproj", "{9C2648F8-EF5A-4490-8192-DCB11423B5A3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,6 +25,10 @@ Global
 		{A24A621E-83C7-4CC4-9AD2-0E7B48A68DEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A24A621E-83C7-4CC4-9AD2-0E7B48A68DEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A24A621E-83C7-4CC4-9AD2-0E7B48A68DEB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C2648F8-EF5A-4490-8192-DCB11423B5A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C2648F8-EF5A-4490-8192-DCB11423B5A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C2648F8-EF5A-4490-8192-DCB11423B5A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C2648F8-EF5A-4490-8192-DCB11423B5A3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -30,6 +36,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{9DD37849-1F8D-4200-8321-4C6703F34B53} = {17A6B2C6-3FD3-4BCA-8B24-BA59A594A20F}
 		{A24A621E-83C7-4CC4-9AD2-0E7B48A68DEB} = {17A6B2C6-3FD3-4BCA-8B24-BA59A594A20F}
+		{9C2648F8-EF5A-4490-8192-DCB11423B5A3} = {17A6B2C6-3FD3-4BCA-8B24-BA59A594A20F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7E4DE9A9-87DD-4739-BAF6-C60439A9DBFF}

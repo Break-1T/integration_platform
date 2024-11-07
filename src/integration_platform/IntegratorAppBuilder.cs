@@ -10,6 +10,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Http;
 
 namespace integration_platform;
 
@@ -18,6 +20,7 @@ public static class IntegratorAppBuilder
     public static WebApplication CreateWebApplication(string[] args, Action<IServiceCollection> configureServices = null, Action<IApplicationBuilder> configureApp = null)
     {
         var builder = WebApplication.CreateBuilder(args);
+        
         builder.WebHost.UseKestrel(options =>
         {
             options.Limits.KeepAliveTimeout = TimeSpan.FromMinutes(10);
@@ -48,11 +51,8 @@ public static class IntegratorAppBuilder
                 options.InvalidModelStateResponseFactory = context => new BadRequestObjectResult(context.ModelState);
             });
 
-        if (builder.Environment.IsDevelopment())
-        {
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
-        }
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen();
 
         builder.Services.AddControllers();
 
@@ -60,23 +60,30 @@ public static class IntegratorAppBuilder
 
         var app = builder.Build();
 
+        configureApp?.Invoke(app);
+
+        app.UseSwagger();
+        app.UseSwaggerUI();
+
         // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI();
-        }
-        else
+        if (!app.Environment.IsDevelopment())
         {
             app.UseExceptionHandler("/Error");
             // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             app.UseHsts();
         }
 
+        app.UseForwardedHeaders(new ForwardedHeadersOptions
+        {
+            ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+        });
+
         app.UseHealthChecks("/health", new HealthCheckOptions
         {
             Predicate = _ => true
         });
+
+        app.MapGet("/", context => context.Response.WriteAsync($"Worker Service ${Environment.GetEnvironmentVariable("WORKER_NAME")}"));
 
         app.UseCors(x => x
             .AllowAnyMethod()

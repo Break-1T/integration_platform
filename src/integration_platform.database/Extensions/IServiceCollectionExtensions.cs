@@ -1,4 +1,6 @@
-﻿using integration_platform.database.Options;
+﻿using integration_platform.database.Interfaces;
+using integration_platform.database.Options;
+using integration_platform.database.Stores;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,6 +24,9 @@ public static class IServiceCollectionExtensions
                 npgOptions.EnableRetryOnFailure();
             });
         });
+
+        serviceDescriptors.AddScoped<IRecordTransferStore, RecordTransferStore>();
+        serviceDescriptors.AddScoped<ITransformRecordStore, TransformRecordStore>();
 
         using (var scope = serviceDescriptors.BuildServiceProvider().CreateScope())
         {
