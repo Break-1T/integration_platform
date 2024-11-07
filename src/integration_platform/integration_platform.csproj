@@ -8,10 +8,14 @@
     <Version>1.0.0</Version>
     <Authors>Taras Krupko</Authors>
     <PackageDescription>Integration Platform</PackageDescription>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <RepositoryUrl>https://github.com/Break-1T/integration_platform</RepositoryUrl>
     <UserSecretsId>b4644a21-106d-4887-a266-3189359e2014</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
+
+    <EnableStaticWebAssets>false</EnableStaticWebAssets>
+    <StaticWebAssetsEnabled>false</StaticWebAssetsEnabled>
   </PropertyGroup>
 
   <ItemGroup>
