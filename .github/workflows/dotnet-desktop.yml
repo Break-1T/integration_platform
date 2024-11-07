@@ -2,11 +2,12 @@ name: Publish NuGet Package
 
 on:
   push:
-    tags:
-      - 'v*.*.*' # Триггер на пуш тегов версии, например v1.0.0
+    branches:
+      - master # Запускать только при пуше в master (или другую основную ветку)
+  workflow_dispatch: # Также позволяет запустить вручную
 
 jobs:
-  build:
+  tag_and_publish:
     runs-on: ubuntu-latest
 
     steps:
@@ -17,6 +18,34 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0' # Укажите нужную версию .NET SDK
+
+      - name: Get latest tag
+        id: get_tag
+        run: |
+          # Получаем последний тег
+          latest_tag=$(git describe --tags --abbrev=0)
+          echo "Последний тег: $latest_tag"
+          echo "tag=$latest_tag" >> $GITHUB_ENV
+
+      - name: Calculate next tag
+        id: next_tag
+        run: |
+          # Извлекаем номер версии из последнего тега и увеличиваем патч-версию
+          IFS='.' read -ra VERSION <<< "${{ env.tag/v/ }}" # Удаляем префикс 'v' и разбиваем на части
+          major=${VERSION[0]}
+          minor=${VERSION[1]}
+          patch=${VERSION[2]}
+          next_patch=$((patch + 1)) # Инкремент патч-версии
+          new_tag="v$major.$minor.$next_patch"
+          echo "next_tag=$new_tag" >> $GITHUB_ENV
+          echo "Новый тег: $new_tag"
+
+      - name: Create new tag
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git tag ${{ env.next_tag }}
+          git push origin ${{ env.next_tag }}
 
       - name: Restore dependencies
         run: dotnet restore
