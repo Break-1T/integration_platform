@@ -70,5 +70,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           dotnet nuget push "./nuget/*.nupkg" \
-            --source "github" \
+            --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" \
             --api-key "$GITHUB_TOKEN"
