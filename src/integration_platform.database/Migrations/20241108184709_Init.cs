@@ -103,7 +103,6 @@ namespace integration_platform.database.Migrations
                     Content = table.Column<byte[]>(type: "bytea", nullable: true),
                     ContentType = table.Column<string>(type: "text", nullable: false),
                     TransformRecordId = table.Column<long>(type: "bigint", nullable: true),
-                    TransformRecordId1 = table.Column<long>(type: "bigint", nullable: true),
                     RecCreated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now() at time zone 'utc'"),
                     RecModified = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now() at time zone 'utc'")
                 },
@@ -113,11 +112,6 @@ namespace integration_platform.database.Migrations
                     table.ForeignKey(
                         name: "FK_TransformRecordContent_TransformRecord_TransformRecordId",
                         column: x => x.TransformRecordId,
-                        principalTable: "TransformRecord",
-                        principalColumn: "TransformRecordId");
-                    table.ForeignKey(
-                        name: "FK_TransformRecordContent_TransformRecord_TransformRecordId1",
-                        column: x => x.TransformRecordId1,
                         principalTable: "TransformRecord",
                         principalColumn: "TransformRecordId");
                 });
@@ -133,6 +127,16 @@ namespace integration_platform.database.Migrations
                 column: "ResponseContentId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_RecordTransfer_Source_Target_RecordType",
+                table: "RecordTransfer",
+                columns: new[] { "Source", "Target", "RecordType" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RecordTransfer_SourceId_TargetId",
+                table: "RecordTransfer",
+                columns: new[] { "SourceId", "TargetId" });
+
+            migrationBuilder.CreateIndex(
                 name: "IX_TransformRecord_InRecordTransferId",
                 table: "TransformRecord",
                 column: "InRecordTransferId");
@@ -143,14 +147,19 @@ namespace integration_platform.database.Migrations
                 column: "OutRecordTransferId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_TransformRecord_Source_Target_RecordType",
+                table: "TransformRecord",
+                columns: new[] { "Source", "Target", "RecordType" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TransformRecord_SourceId_TargetId",
+                table: "TransformRecord",
+                columns: new[] { "SourceId", "TargetId" });
+
+            migrationBuilder.CreateIndex(
                 name: "IX_TransformRecordContent_TransformRecordId",
                 table: "TransformRecordContent",
                 column: "TransformRecordId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TransformRecordContent_TransformRecordId1",
-                table: "TransformRecordContent",
-                column: "TransformRecordId1");
         }
 
         /// <inheritdoc />

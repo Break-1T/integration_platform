@@ -1,7 +1,9 @@
 ﻿using integration_platform.Classes.Base;
 using integration_platform.Constant;
 using integration_platform.database.Options;
+using integration_platform.Interfaces;
 using integration_platform.Options;
+using integration_platform.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -41,7 +43,7 @@ public static class IServiceCollectionExtensions
             option.UsePersistentStore(storeConfig =>
             {
                 storeConfig.RetryInterval = TimeSpan.FromSeconds(60);
-                storeConfig.UseProperties = true;
+                //storeConfig.UseProperties = true;
 
                 storeConfig.UsePostgres(postgresConfig =>
                 {
@@ -58,6 +60,8 @@ public static class IServiceCollectionExtensions
             o.WaitForJobsToComplete = true;
             o.AwaitApplicationStarted = true;
         });
+
+        services.AddScoped<IJobsService, JobsService>();
 
         return services;
     }

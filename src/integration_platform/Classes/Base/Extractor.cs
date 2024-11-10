@@ -4,6 +4,7 @@ using integration_platform.database.Interfaces;
 using integration_platform.database.Models;
 using Microsoft.Extensions.Logging;
 using Quartz;
+using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -74,13 +75,15 @@ public abstract class Extractor : BaseIntegrationJob
         TransformRecordStore = transformRecordStore;
     }
 
-    public override void InitDefaultJobSettings(JobDataMap settings)
+    public override Dictionary<string, object> InitDefaultJobSettings()
     {
-        base.InitDefaultJobSettings(settings);
-        settings.Put(SourceNodeSettingName, "");
-        settings.Put(TargetNodeSettingName, "");
-        settings.Put(RecordTransferTypeSettingName, "");
-        settings.Put(TransformRecordTypeSettingName, "");
+        var settings = base.InitDefaultJobSettings();
+        settings.Add(SourceNodeSettingName, "");
+        settings.Add(TargetNodeSettingName, "");
+        settings.Add(RecordTransferTypeSettingName, "");
+        settings.Add(TransformRecordTypeSettingName, "");
+
+        return settings;
     }
 
     protected abstract Task CreateRecordTransfersAsync();

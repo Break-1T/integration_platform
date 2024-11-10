@@ -43,4 +43,8 @@
     <ProjectReference Include="..\integration_platform.database\integration_platform.database.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\ResponseModels\" />
+  </ItemGroup>
+
 </Project>

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Quartz;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -21,9 +22,12 @@ public abstract class BaseIntegrationJob : IJob
     public ILogger Logger { get; }
     public int MaxThreads { get; private set; }
 
-    public virtual void InitDefaultJobSettings(JobDataMap settings)
+    public virtual Dictionary<string, object> InitDefaultJobSettings()
     {
-        settings.Put(MaxThreadCountSettingName, 10);
+        return new Dictionary<string, object> 
+        {
+            { MaxThreadCountSettingName, 10 }
+        };
     }
 
     public virtual Task<bool> BeforeExecutingAsync(CancellationToken cancellationToken = default)

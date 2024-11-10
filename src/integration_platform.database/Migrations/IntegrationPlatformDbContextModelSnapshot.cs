@@ -76,6 +76,10 @@ namespace integration_platform.database.Migrations
 
                     b.HasIndex("ResponseContentId");
 
+                    b.HasIndex("SourceId", "TargetId");
+
+                    b.HasIndex("Source", "Target", "RecordType");
+
                     b.ToTable("RecordTransfer", (string)null);
                 });
 
@@ -162,6 +166,10 @@ namespace integration_platform.database.Migrations
 
                     b.HasIndex("OutRecordTransferId");
 
+                    b.HasIndex("SourceId", "TargetId");
+
+                    b.HasIndex("Source", "Target", "RecordType");
+
                     b.ToTable("TransformRecord", (string)null);
                 });
 
@@ -193,14 +201,9 @@ namespace integration_platform.database.Migrations
                     b.Property<long?>("TransformRecordId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("TransformRecordId1")
-                        .HasColumnType("bigint");
-
                     b.HasKey("TransformRecordContentId");
 
                     b.HasIndex("TransformRecordId");
-
-                    b.HasIndex("TransformRecordId1");
 
                     b.ToTable("TransformRecordContent", (string)null);
                 });
@@ -237,13 +240,9 @@ namespace integration_platform.database.Migrations
 
             modelBuilder.Entity("integration_platform.database.Models.TransformRecordContent", b =>
                 {
-                    b.HasOne("integration_platform.database.Models.TransformRecord", null)
+                    b.HasOne("integration_platform.database.Models.TransformRecord", "TransformRecord")
                         .WithMany("ContentList")
                         .HasForeignKey("TransformRecordId");
-
-                    b.HasOne("integration_platform.database.Models.TransformRecord", "TransformRecord")
-                        .WithMany()
-                        .HasForeignKey("TransformRecordId1");
 
                     b.Navigation("TransformRecord");
                 });

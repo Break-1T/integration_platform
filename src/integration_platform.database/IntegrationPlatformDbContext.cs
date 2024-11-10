@@ -42,6 +42,9 @@ public class IntegrationPlatformDbContext : DbContext
             entity.HasOne(recTransfer => recTransfer.ResponseContent)
                 .WithMany()
                 .HasForeignKey(recTransfer => recTransfer.ResponseContentId);
+
+            entity.HasIndex(x=> new {x.Source, x.Target, x.RecordType});
+            entity.HasIndex(x=> new {x.SourceId, x.TargetId});
         });
 
         modelBuilder.Entity<TransformRecord>(entity =>
@@ -70,8 +73,11 @@ public class IntegrationPlatformDbContext : DbContext
                 .HasForeignKey(transformRecord => transformRecord.OutRecordTransferId);
 
             entity.HasMany(transformRecord => transformRecord.ContentList)
-                .WithOne()
+                .WithOne(x=>x.TransformRecord)
                 .HasForeignKey(recordContent => recordContent.TransformRecordId);
+
+            entity.HasIndex(x => new { x.Source, x.Target, x.RecordType });
+            entity.HasIndex(x => new { x.SourceId, x.TargetId });
         });
 
         modelBuilder.Entity<RecordTransferContent>(entity =>

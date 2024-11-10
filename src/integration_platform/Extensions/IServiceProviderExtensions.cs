@@ -2,6 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Quartz;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 namespace integration_platform.Extensions;
@@ -25,7 +27,7 @@ public static class IServiceProviderExtensions
         string jobName, 
         string jobGroup, 
         string cronSchedule,
-        JobDataMap jobDataMap,
+        Dictionary<string, object> settings,
         bool isEnabled = false,
         TimeZoneInfo timeZoneInfo = null,
         CancellationToken cancellationToken = default)
@@ -34,7 +36,13 @@ public static class IServiceProviderExtensions
         using var scope = serviceProvider.CreateAsyncScope();
         var schedFactory = scope.ServiceProvider.GetRequiredService<ISchedulerFactory>();
         var integrationJob = scope.ServiceProvider.GetRequiredService<TJob>();
-
+        
+        var defaultSettings = integrationJob.InitDefaultJobSettings();
+        var jobSettings = defaultSettings.ToDictionary(key => key.Key, value =>
+        {
+            return settings.TryGetValue(value.Key, out var settingValue) ? settingValue : value.Value;
+        }) as IDictionary<string, object>;
+        
         var scheduler = await schedFactory.GetScheduler(cancellationToken);
         
         var jobKey = JobKey.Create(jobName, jobGroup);
@@ -44,21 +52,29 @@ public static class IServiceProviderExtensions
 
         if (jobDetail != null)
         {
-            integrationJob.InitDefaultJobSettings(jobDetail.JobDataMap);
-            jobDetail = jobDetail.GetJobBuilder().UsingJobData(jobDataMap).Build();
+            foreach (var setting in jobSettings)
+            {
+                if (jobDetail.JobDataMap.TryGetValue(setting.Key, out var value))
+                {
+                    jobSettings[setting.Key] = value;
+                }
+            }
+
+            jobDetail = jobDetail.GetJobBuilder().UsingJobData(new JobDataMap(jobSettings)).Build();
             
         }
         else
         {
             jobDetail = JobBuilder
                 .Create<TJob>()
-                .UsingJobData(jobDataMap)
+                .UsingJobData(new JobDataMap(jobSettings))
                 .WithIdentity(jobKey)
+                .StoreDurably()
                 .Build();
         }
         await scheduler.AddJob(jobDetail, true, cancellationToken);
 
-        var trigger = await scheduler.GetTrigger(triggerKey);
+        var trigger = await scheduler.GetTrigger(triggerKey, cancellationToken);
 
         if (trigger != null)
         {
@@ -70,7 +86,7 @@ public static class IServiceProviderExtensions
                     builder => builder
                         .InTimeZone(timeZoneInfo ?? TimeZoneInfo.Utc)
                         .WithMisfireHandlingInstructionDoNothing())
-                .UsingJobData(jobDataMap);
+                .UsingJobData(new JobDataMap(jobSettings));
 
             if (!isEnabled)
             {
@@ -90,7 +106,7 @@ public static class IServiceProviderExtensions
             var triggerBuilder = TriggerBuilder
                 .Create()
                 .ForJob(jobDetail)
-                .UsingJobData(jobDataMap)
+                .UsingJobData(new JobDataMap(jobSettings))
                 .WithIdentity(jobName, jobGroup)
                 .WithCronSchedule(
                     cronSchedule, 
